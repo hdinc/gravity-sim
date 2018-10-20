@@ -29,7 +29,7 @@ int main()
     createWindow(500, 500, "");
 
     GLuint VertexArrayID;
-    glGenVertexArrays(1, &VertexArrayID);
+    glGenVertexArrays(1, &VertexArrayID); //dfgsdfg
     glBindVertexArray(VertexArrayID);
 
     GLuint vertexbuffer;
