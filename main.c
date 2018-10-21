@@ -42,16 +42,16 @@ int main()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbufer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * 4 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 5 * sizeof(float));                  //burası yanlıs olabilir
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 5 * sizeof(float);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0); //burası yanlıs olabilir
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (const void*)(2* sizeof(float)));
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
 
     GLuint shader = createShaderProgram("vertexShader.glsl", "fragmentShader.glsl");
     
-
-    GLint uniformid = glGetUniformLocation(shader, "u_barzo");
     glUseProgram(shader);
+
+    //GLint uniformid = glGetUniformLocation(shader, "u_barzo");
     //glUniform4f(uniformid, 0.0f,0.8f,0.2f,1.0f);
 
     startLoop();

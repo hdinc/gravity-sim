@@ -1,7 +1,7 @@
 #version 330 core
-out vec4 color;
-uniform vec4 u_barzo;
+in vec3 c;
+out vec3 color;
 void main()
 {
-    color = u_barzo;
+    color = c;
 }
