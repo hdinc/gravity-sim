@@ -29,7 +29,7 @@ int main()
     createWindow(500, 500, "");
 
     GLuint VertexArrayID;
-    glGenVertexArrays(1, &VertexArrayID); //dfgsdfg
+    glGenVertexArrays(1, &VertexArrayID);
     glBindVertexArray(VertexArrayID);
 
     GLuint vertexbuffer;
@@ -50,10 +50,6 @@ int main()
     GLuint shader = createShaderProgram("vertexShader.glsl", "fragmentShader.glsl");
     
     glUseProgram(shader);
-    glClearColor(0.2f, 0.6f, 0.3f, 1.0f);
-
-    //GLint uniformid = glGetUniformLocation(shader, "u_barzo");
-    //glUniform4f(uniformid, 0.0f,0.8f,0.2f,1.0f);
 
     startLoop();
 
