@@ -6,8 +6,6 @@
 #include "window.h"
 #include "shader.h"
 
-void gl_init();
-
 int main()
 {
     createWindow(500, 500, "graphics pad");
