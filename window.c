@@ -4,7 +4,10 @@
 
 #include "window.h"
 
-void loop(void);
+void gl_loop();
+void gl_init();
+int w;
+int h;
 
 GLFWwindow* window;
 
@@ -25,13 +28,25 @@ void fpsTitle()
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    if (key == GLFW_KEY_E && action == GLFW_PRESS) {
-        glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, 1920, 1080, 60);
-        glViewport(0,0,1920,1080);
+    static int f = 0, w, h, px, py;
+
+    if (key == GLFW_KEY_F && action == GLFW_PRESS) {
+        if(!f){
+            glfwGetWindowSize(window, &w, &h);
+            glfwGetWindowPos(window, &px, &py);
+            glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, 1920, 1080, 60);
+            glViewport(0, 0, 1920, 1080);
+            f=1;
+        }
+        else {
+            glfwSetWindowMonitor(window, NULL, px, py, w, h, GLFW_DONT_CARE);
+            glViewport(0, 0, w, h);
+            f=0;
+        }
+        
     }
-    if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-        glfwSetWindowMonitor(window, NULL, 100, 100, 640, 360, GLFW_DONT_CARE);
-        glViewport(0, 0, 640, 360);
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, GLFW_TRUE);
     }
 }
 
@@ -58,13 +73,18 @@ void createWindow(int width, int height, const char* title)
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 }
 
-void startLoop()
+void init()
+{
+    gl_init();
+}
+
+void loop()
 {
     while (!glfwWindowShouldClose(window)) {
-        loop();
+        gl_loop();
         glfwSwapBuffers(window);
         glfwPollEvents();
-        fpsTitle();
+        //fpsTitle();
     }
 }
 
