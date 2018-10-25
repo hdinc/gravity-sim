@@ -5,6 +5,7 @@
 
 #include "window.h"
 #include "shader.h"
+#include "point.h"
 
 int main()
 {
@@ -25,9 +26,11 @@ void gl_init()
     glGenVertexArrays(1, &vaoID);
     glBindVertexArray(vaoID);
 
-
     GLuint program = createShaderProgram("vertexShader.glsl", "fragmentShader.glsl");
+
+    GLint position = glGetUniformLocation(program, "u_position");
     glUseProgram(program);
+    glUniform2f(position, 1.0f, 1.0f);
 }
 
 void gl_loop()

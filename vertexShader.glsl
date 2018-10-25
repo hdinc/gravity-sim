@@ -1,8 +1,8 @@
 #version 330 core
 
-uniform vec3 position;
+uniform vec2 u_position;
 
 void main()
 {
-    gl_Position = vec4(position,1.0); 
+    gl_Position = vec4(u_position,0.0,1.0); 
 }
