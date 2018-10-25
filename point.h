@@ -4,11 +4,11 @@
 typedef struct {
     float xpos;
     float ypos;
-    float xspeed;
-    float yspeed;
 } point;
 
-void calcPointSpeed2(point a, point b);
+extern int count;
+extern point* points;
 
+void addpoint(float x, float y);
 
 #endif

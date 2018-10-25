@@ -1,8 +1,11 @@
 #include <math.h>
 #include "point.h"
-#define G
 
-void calcPointSpeed2(point* a, point* b)
+#define G 1
+
+void addpoint(float x, float y)
 {
-
+    points[count].xpos = x;
+    points[count].ypos = y;
+    count++;
 }

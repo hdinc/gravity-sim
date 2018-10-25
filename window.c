@@ -4,10 +4,9 @@
 
 #include "window.h"
 
+void addpoint(float x, float y);
 void gl_loop();
 void gl_init();
-int w;
-int h;
 
 GLFWwindow* window;
 
@@ -24,6 +23,20 @@ void fpsTitle()
     count = 0;
     time = glfwGetTime();
     glfwSetWindowTitle(window, c);
+}
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS){
+        double x,y;
+        int wx,wy;
+        glfwGetCursorPos(window,&x,&y);
+        glfwGetWindowSize(window, &wx, &wy);
+        x = (2*x - wx)/wx;
+        y = -(2*y - wy)/wy;
+        addpoint(x,y);
+    }
+
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -64,6 +77,7 @@ void createWindow(int width, int height, const char* title)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     window = glfwCreateWindow(width, height, title, NULL, NULL);
+    glfwSetMouseButtonCallback(window, mouse_button_callback);
     glfwSetKeyCallback(window, key_callback);
     //glfwSetWindowAspectRatio(window,16,9);
     //glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);

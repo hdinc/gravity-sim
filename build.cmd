@@ -1,1 +1,1 @@
-gcc -O3 main.c shader.c window.c -o graphics_pad -lglfw3 -lglad -luser32 -lkernel32 -lgdi32
+gcc -O3 main.c point.c shader.c window.c -o points -lglfw3 -lglad -luser32 -lkernel32 -lgdi32
