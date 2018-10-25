@@ -1,7 +1,6 @@
 #version 330 core
-in vec4 vertexColor; // name must match with vertexshaders out
 out vec4 color;
 void main()
 {
-    color = vertexColor;
+    color = vec4(1.0,0.0,0.0,1.0);
 }
