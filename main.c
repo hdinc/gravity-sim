@@ -8,46 +8,48 @@
 #include "point.h"
 
 GLint position;
-int count = 0;
+unsigned int count = 0;
 point* points;
 
 int main()
 {
-    createWindow(500, 500, "graphics pad");
+    createWindow(500, 500, "gravity sim");
 
     init();
 
-    points = malloc(50 * sizeof(point));
+    points = calloc(100,sizeof(point));
+    printf("%p",points);
 
     loop();
 
+    free(points);
     destroyWindow();
 }
 
 void gl_init()
 {
-
-    glClearColor(+0.0f, +0.0f, +0.0f, +1.0f);
-
     GLuint vaoID;
     glGenVertexArrays(1, &vaoID);
     glBindVertexArray(vaoID);
 
     GLuint vbID;
-    //glGenBuffers(1, &vbID);
-    //glBindBuffer(GL_ARRAY_BUFFER, vbID);
+    glGenBuffers(1, &vbID);
+    glBindBuffer(GL_ARRAY_BUFFER, vbID);
 
     GLuint program = createShaderProgram("vertexShader.glsl", "fragmentShader.glsl");
-
     position = glGetUniformLocation(program, "u_position");
     glUseProgram(program);
+    
 }
-
-void gl_loop()
+void gl_loop(double deltaT)
 {
     glClear(GL_COLOR_BUFFER_BIT);
-    for (int i = 0; i < count; i++) {
-        glUniform2f(position, points[i].xpos, points[i].ypos);
+    calcForces();
+    updateSpeed(deltaT);
+    updateLocation(deltaT);
+    updateViewportCordinates();
+    for (unsigned int i = 0; i < count; i++) {
+        glUniform2f(position, points[i].glx, points[i].gly);
         glDrawArrays(GL_POINTS, 0,1);
     }
 }

@@ -5,6 +5,9 @@
 #include <string.h>
 #include "shader.h"
 
+static GLuint complieShader(GLenum type, const char* shaderSource);
+static char* getShader(const char* filename);
+
 static void checkError(GLuint id, GLenum pname)
 {
     int result;

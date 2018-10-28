@@ -4,11 +4,13 @@
 
 #include "window.h"
 
-void addpoint(float x, float y);
-void gl_loop();
+void addpoint(double x, double y);
+void gl_loop(double deltaT);
 void gl_init();
 
 GLFWwindow* window;
+int view_factor = 1;
+int wx,wy;
 
 void fpsTitle()
 {
@@ -29,15 +31,25 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS){
         double x,y;
-        int wx,wy;
         glfwGetCursorPos(window,&x,&y);
         glfwGetWindowSize(window, &wx, &wy);
-        x = (2*x - wx)/wx;
-        y = -(2*y - wy)/wy;
-        addpoint(x,y);
+        addpoint((x-wx/2.0)*view_factor,(wy/2.0-y)*view_factor);
     }
 
 }
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    if (yoffset > 0 && view_factor < 1024){
+        view_factor *= 2;
+        return;
+    }
+    if(yoffset < 0 && view_factor != 1){
+        view_factor /= 2;
+        return;
+    }
+}
+
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -48,12 +60,17 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             glfwGetWindowSize(window, &w, &h);
             glfwGetWindowPos(window, &px, &py);
             glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, 1920, 1080, 60);
-            glViewport(0, 0, 1920, 1080);
+            wx=1920;
+            wy=1080;
+            glViewport(0,0,wx,wy);
             f=1;
         }
         else {
             glfwSetWindowMonitor(window, NULL, px, py, w, h, GLFW_DONT_CARE);
-            glViewport(0, 0, w, h);
+            wx=w;
+            wy=h;
+            glViewport(0,0,wx,wy);
+
             f=0;
         }
         
@@ -65,26 +82,29 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-    glViewport(0, 0, width, height);
+    glfwGetWindowSize(window, &wx, &wy);
+    glViewport(0,0,wx,wy);
 }
 
 void createWindow(int width, int height, const char* title)
 {
     glfwInit();
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+    //glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     window = glfwCreateWindow(width, height, title, NULL, NULL);
+
     glfwSetMouseButtonCallback(window, mouse_button_callback);
     glfwSetKeyCallback(window, key_callback);
-    //glfwSetWindowAspectRatio(window,16,9);
-    //glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetScrollCallback(window, scroll_callback);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     glfwMakeContextCurrent(window);
-    glfwSwapInterval(1);
+    glfwSwapInterval(0);
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+    glViewport(0,0,width,height);
 }
 
 void init()
@@ -94,10 +114,15 @@ void init()
 
 void loop()
 {
+    static double t = 0;
+    static double deltaT;
+    
     while (!glfwWindowShouldClose(window)) {
-        gl_loop();
+        gl_loop(deltaT);
         glfwSwapBuffers(window);
+        deltaT = glfwGetTime() - t;
         glfwPollEvents();
+        t = glfwGetTime();
         //fpsTitle();
     }
 }
