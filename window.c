@@ -10,7 +10,9 @@ void gl_init();
 
 GLFWwindow* window;
 int view_factor = 1;
-int wx,wy;
+int wx, wy;
+
+int pause=1;
 
 void fpsTitle()
 {
@@ -29,61 +31,63 @@ void fpsTitle()
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
-    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS){
-        double x,y;
-        glfwGetCursorPos(window,&x,&y);
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+        double x, y;
+        glfwGetCursorPos(window, &x, &y);
         glfwGetWindowSize(window, &wx, &wy);
-        addpoint((x-wx/2.0)*view_factor,(wy/2.0-y)*view_factor);
+        addpoint((x - wx / 2.0) * view_factor, (wy / 2.0 - y) * view_factor);
     }
-
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    if (yoffset > 0 && view_factor < 1024){
+    if (yoffset > 0 && view_factor < 1024) {
         view_factor *= 2;
         return;
     }
-    if(yoffset < 0 && view_factor != 1){
+    if (yoffset < 0 && view_factor != 1) {
         view_factor /= 2;
         return;
     }
 }
-
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     static int f = 0, w, h, px, py;
 
     if (key == GLFW_KEY_F && action == GLFW_PRESS) {
-        if(!f){
+        if (!f) {
             glfwGetWindowSize(window, &w, &h);
             glfwGetWindowPos(window, &px, &py);
             glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, 1920, 1080, 60);
-            wx=1920;
-            wy=1080;
-            glViewport(0,0,wx,wy);
-            f=1;
-        }
-        else {
+            wx = 1920;
+            wy = 1080;
+            glViewport(0, 0, wx, wy);
+            f = 1;
+        } else {
             glfwSetWindowMonitor(window, NULL, px, py, w, h, GLFW_DONT_CARE);
-            wx=w;
-            wy=h;
-            glViewport(0,0,wx,wy);
+            wx = w;
+            wy = h;
+            glViewport(0, 0, wx, wy);
 
-            f=0;
+            f = 0;
         }
-        
     }
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
+    }
+    if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+        if (pause)
+            pause = 0;
+        else
+            pause = 1;
     }
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glfwGetWindowSize(window, &wx, &wy);
-    glViewport(0,0,wx,wy);
+    glViewport(0, 0, wx, wy);
 }
 
 void createWindow(int width, int height, const char* title)
@@ -102,9 +106,9 @@ void createWindow(int width, int height, const char* title)
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     glfwMakeContextCurrent(window);
-    glfwSwapInterval(0);
+    glfwSwapInterval(1);
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-    glViewport(0,0,width,height);
+    glViewport(0, 0, width, height);
 }
 
 void init()

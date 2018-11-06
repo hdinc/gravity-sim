@@ -6,7 +6,7 @@
 #include "window.h"
 #include "shader.h"
 #include "point.h"
-
+extern int pause;
 GLint position;
 unsigned int count = 0;
 point* points;
@@ -17,8 +17,8 @@ int main()
 
     init();
 
-    points = calloc(100,sizeof(point));
-    printf("%p",points);
+    points = calloc(100, sizeof(point));
+    printf("%p", points);
 
     loop();
 
@@ -39,17 +39,18 @@ void gl_init()
     GLuint program = createShaderProgram("vertexShader.glsl", "fragmentShader.glsl");
     position = glGetUniformLocation(program, "u_position");
     glUseProgram(program);
-    
 }
 void gl_loop(double deltaT)
 {
     glClear(GL_COLOR_BUFFER_BIT);
-    calcForces();
-    updateSpeed(deltaT);
-    updateLocation(deltaT);
+    if (pause != 0) {
+        calcForces();
+        updateSpeed(deltaT);
+        updateLocation(deltaT);
+    }
     updateViewportCordinates();
     for (unsigned int i = 0; i < count; i++) {
         glUniform2f(position, points[i].glx, points[i].gly);
-        glDrawArrays(GL_POINTS, 0,1);
+        glDrawArrays(GL_POINTS, 0, 1);
     }
 }
