@@ -1,0 +1,6 @@
+F      : fullscreen
+C      : print point count
+LMB    : add single point
+RMB    : add multiple points
+SPACE  : Pause
+SCROLL : Shrink view
