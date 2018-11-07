@@ -17,8 +17,11 @@ int main()
 
     init();
 
-    points = calloc(100, sizeof(point));
-    printf("%p", points);
+    points = calloc(10000, sizeof(point));
+    if (!points) {
+        printf("calloc returned null");
+        exit(1);
+    }
 
     loop();
 

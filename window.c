@@ -3,8 +3,9 @@
 #include <stdio.h>
 
 #include "window.h"
-
+extern unsigned int count;
 void addpoint(double x, double y);
+int ap;
 void gl_loop(double deltaT);
 void gl_init();
 
@@ -12,7 +13,7 @@ GLFWwindow* window;
 int view_factor = 1;
 int wx, wy;
 
-int pause=1;
+int pause = 1;
 
 void fpsTitle()
 {
@@ -29,6 +30,14 @@ void fpsTitle()
     glfwSetWindowTitle(window, c);
 }
 
+void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos)
+{
+    if (ap) {
+        glfwGetWindowSize(window, &wx, &wy);
+        addpoint((xpos - wx / 2.0) * view_factor, (wy / 2.0 - ypos) * view_factor);
+    }
+}
+
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
@@ -36,6 +45,12 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
         glfwGetCursorPos(window, &x, &y);
         glfwGetWindowSize(window, &wx, &wy);
         addpoint((x - wx / 2.0) * view_factor, (wy / 2.0 - y) * view_factor);
+    }
+    if (button == GLFW_MOUSE_BUTTON_RIGHT) {
+        if (!ap)
+            ap = 1;
+        else
+            ap = 0;
     }
 }
 
@@ -82,6 +97,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         else
             pause = 1;
     }
+
+    if (key == GLFW_KEY_C && action == GLFW_PRESS) {
+        printf("count = %d\n", count);
+    }
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -102,11 +121,12 @@ void createWindow(int width, int height, const char* title)
 
     glfwSetMouseButtonCallback(window, mouse_button_callback);
     glfwSetKeyCallback(window, key_callback);
+    glfwSetCursorPosCallback(window, cursor_pos_callback);
     glfwSetScrollCallback(window, scroll_callback);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     glfwMakeContextCurrent(window);
-    glfwSwapInterval(1);
+    glfwSwapInterval(0);
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
     glViewport(0, 0, width, height);
 }
@@ -120,7 +140,7 @@ void loop()
 {
     static double t = 0;
     static double deltaT;
-    
+
     while (!glfwWindowShouldClose(window)) {
         gl_loop(deltaT);
         glfwSwapBuffers(window);
