@@ -42,17 +42,22 @@ void gl_init()
     GLuint program = createShaderProgram("vertexShader.glsl", "fragmentShader.glsl");
     position = glGetUniformLocation(program, "u_position");
     glUseProgram(program);
+
+    glEnable(GL_PROGRAM_POINT_SIZE);
+
 }
 void gl_loop(double deltaT)
 {
     glClear(GL_COLOR_BUFFER_BIT);
     if (pause != 0) {
+        collusion();
         calcForces();
         updateSpeed(deltaT);
         updateLocation(deltaT);
     }
     updateViewportCordinates();
     for (unsigned int i = 0; i < count; i++) {
+        glPointSize(points[i].r/view_factor);
         glUniform2f(position, points[i].glx, points[i].gly);
         glDrawArrays(GL_POINTS, 0, 1);
     }

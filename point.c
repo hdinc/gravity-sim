@@ -9,7 +9,28 @@ void addpoint(double x, double y)
 {
     points[count].sx = x;
     points[count].sy = y;
+    points[count].m = 1;
+    points[count].r = 1;
     count++;
+}
+
+void collusion()
+{
+    double dist;
+    for (unsigned int i = 0; i < count; i++) {
+        for (unsigned int j = i + 1; j < count; j++) {
+            dist = sqrt((points[i].sx - points[j].sx) * (points[i].sx - points[j].sx) + (points[i].sy - points[j].sy) * (points[i].sy - points[j].sy));
+            if(dist<points[i].r+points[j].r){
+                points[i].vx=(points[i].vx*points[i].m+points[j].vx*points[j].m)/(points[i].m+points[i].m);
+                points[i].vy=(points[i].vy*points[i].m+points[j].vy*points[j].m)/(points[i].m+points[i].m);
+                points[i].m+=points[j].m;
+                points[i].r=sqrt(points[i].m);
+                points[j]=points[count-1];
+                count--;
+                j--;
+            }
+        }
+    }
 }
 
 void calcForces()
@@ -17,9 +38,9 @@ void calcForces()
     setForcesZero();
     double xf, yf, factor, dist;
     for (unsigned int i = 0; i < count; i++) {
-        for (unsigned int j = i+1; j < count; j++) {
+        for (unsigned int j = i + 1; j < count; j++) {
             dist = sqrt((points[i].sx - points[j].sx) * (points[i].sx - points[j].sx) + (points[i].sy - points[j].sy) * (points[i].sy - points[j].sy));
-            factor = G / (dist * dist * dist);
+            factor = (G*points[i].m*points[j].m) / (dist * dist * dist);
             xf = factor * (points[i].sx - points[j].sx);
             yf = factor * (points[i].sy - points[j].sy);
             points[j].fx += xf;
@@ -28,16 +49,16 @@ void calcForces()
             points[i].fy -= yf;
         }
         //test
-       // points[i].fx = 1;
-       // points[i].fy = 1;
+        // points[i].fx = 1;
+        // points[i].fy = 1;
     }
 }
 
 void updateSpeed(double timePassed)
 {
     for (unsigned int i = 0; i < count; i++) {
-        points[i].vx += points[i].fx * timePassed;
-        points[i].vy += points[i].fy * timePassed;
+        points[i].vx += (points[i].fx/points[i].m) * timePassed;
+        points[i].vy += points[i].fy/points[i].m * timePassed;
     }
 }
 
