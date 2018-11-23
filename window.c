@@ -101,6 +101,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     if (key == GLFW_KEY_C && action == GLFW_PRESS) {
         printf("count = %d\n", count);
     }
+
+    if (key == GLFW_KEY_R && action == GLFW_PRESS) {
+        count = 0;
+    }
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)

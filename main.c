@@ -44,7 +44,7 @@ void gl_init()
     glUseProgram(program);
 
     glEnable(GL_PROGRAM_POINT_SIZE);
-
+    
 }
 void gl_loop(double deltaT)
 {

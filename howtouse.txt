@@ -4,3 +4,4 @@ LMB    : add single point
 RMB    : add multiple points
 SPACE  : Pause
 SCROLL : Shrink view
+R      : reset
