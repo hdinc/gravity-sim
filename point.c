@@ -3,7 +3,7 @@
 #include "point.h"
 static void setForcesZero();
 
-#define G 1000
+int G = 10000;
 
 void addpoint(double x, double y)
 {

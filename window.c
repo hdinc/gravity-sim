@@ -4,6 +4,8 @@
 
 #include "window.h"
 extern unsigned int count;
+extern int G;
+int g;
 void addpoint(double x, double y);
 int ap;
 void gl_loop(double deltaT);
@@ -56,6 +58,10 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
+    if (g) {
+        G += yoffset * 1000;
+        return;
+    }
     if (yoffset > 0 && view_factor < 1024) {
         view_factor *= 2;
         return;
@@ -104,6 +110,14 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
     if (key == GLFW_KEY_R && action == GLFW_PRESS) {
         count = 0;
+    }
+    if (key == GLFW_KEY_LEFT_CONTROL && action == GLFW_PRESS) {
+        g = 1;
+    } else if (key == GLFW_KEY_LEFT_CONTROL && action == GLFW_RELEASE) {
+        g = 0;
+    }
+    if (key == GLFW_KEY_G && action == GLFW_PRESS) {
+        printf("%d\n", G);
     }
 }
 
