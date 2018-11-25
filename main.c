@@ -6,58 +6,87 @@
 #include "window.h"
 #include "shader.h"
 
-static const float positions[] = {
-    0.00f, 0.50f, //v0
-    0.25f, 0.25f, //v1
-    0.50f, 0.00f, //v2
-    0.25f, -0.25f, //v3
-    0.00f, -0.50f, //v4
-    -0.25f, -0.25f, //v5
-    -0.50f, 0.00f, //v6
-    -0.25f, 0.25f //v7
+GLint u_cpos;
+GLint u_r;
+
+float radius=5.0;
+
+GLfloat vertices[8] = {
+    -1.0f, +1.0f,
+    +1.0f, +1.0f,
+    +1.0f, -1.0f,
+    -1.0f, -1.0f
 };
 
-static const unsigned int indices[] = {
-    0, 7, 1,
-    7, 6, 5,
-    5, 4, 3,
-    3, 2, 1
-};
+GLubyte indices[6] = { 0, 1, 2, 0, 3, 2 };
 
 int main()
 {
-    createWindow(500, 500, "");
+    createWindow(500, 500, "gravity sim");
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
-    GLuint VertexArrayID;
-    glGenVertexArrays(1, &VertexArrayID); //dfgsdfg
-    glBindVertexArray(VertexArrayID);
+    init();
 
-    GLuint vertexbuffer;
-    glGenBuffers(1, &vertexbuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-    glBufferData(GL_ARRAY_BUFFER, 8 * 2 * sizeof(float), positions, GL_STATIC_DRAW);
-
-    GLuint indexbufer;
-    glGenBuffers(1, &indexbufer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbufer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * 4 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(0);
-
-    GLuint shader = createShaderProgram("vertexShader.glsl", "fragmentShader.glsl");
-    
-
-    GLint uniformid = glGetUniformLocation(shader, "u_barzo");
-    glUseProgram(shader);
-    glUniform4f(uniformid, 0.0f,0.8f,0.2f,1.0f);
-
-    startLoop();
+    loop();
 
     destroyWindow();
 }
-void loop()
+
+void gl_init()
 {
+    GLuint vaoID;
+    glGenVertexArrays(1, &vaoID);
+    glBindVertexArray(vaoID);
+
+    GLuint vbID;
+    glGenBuffers(1, &vbID);
+    glBindBuffer(GL_ARRAY_BUFFER, vbID);
+    glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(float), vertices, GL_STATIC_DRAW);
+
+    GLuint ibID;
+    glGenBuffers(1, &ibID);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibID);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6, indices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2*sizeof(float), 0);
+    glEnableVertexAttribArray(0);
+
+    GLuint program = createShaderProgram("vertexShader.glsl", "fragmentShader.glsl");
+    glUseProgram(program);
+
+    u_cpos = glGetUniformLocation(program, "u_position");
+    u_r = glGetUniformLocation(program, "u_radius");
+    glClearColor(0.0,0.0,0.0,1.0);
+
+}
+
+void gl_loop(double deltaT)
+{
+    static double wx,wy;
     glClear(GL_COLOR_BUFFER_BIT);
-    glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, NULL);
+    glfwGetCursorPos(window,&wx, &wy);
+    glUniform2f(u_cpos,wx,500-wy);
+    glUniform1f(u_r, radius);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, NULL);
+}
+
+void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos)
+{
+}
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    radius+=yoffset/2.0;
+}
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+}
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
 }

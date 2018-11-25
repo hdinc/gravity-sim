@@ -1,0 +1,1 @@
+gcc -O3 -Wall main.c shader.c window.c -s -o frag -lglfw3 -lglad -luser32 -lkernel32 -lgdi32

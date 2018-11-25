@@ -3,8 +3,8 @@
 #include <stdio.h>
 
 #include "window.h"
-
-void loop(void);
+void gl_loop(double deltaT);
+void gl_init();
 
 GLFWwindow* window;
 
@@ -23,48 +23,45 @@ void fpsTitle()
     glfwSetWindowTitle(window, c);
 }
 
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    if (key == GLFW_KEY_E && action == GLFW_PRESS) {
-        glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, 1920, 1080, 60);
-        glViewport(0,0,1920,1080);
-    }
-    if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-        glfwSetWindowMonitor(window, NULL, 100, 100, 640, 360, GLFW_DONT_CARE);
-        glViewport(0, 0, 640, 360);
-    }
-}
-
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-    glViewport(0, 0, width, height);
-}
-
 void createWindow(int width, int height, const char* title)
 {
     glfwInit();
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     window = glfwCreateWindow(width, height, title, NULL, NULL);
+
+    glfwSetMouseButtonCallback(window, mouse_button_callback);
     glfwSetKeyCallback(window, key_callback);
-    //glfwSetWindowAspectRatio(window,16,9);
-    //glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetCursorPosCallback(window, cursor_pos_callback);
+    glfwSetScrollCallback(window, scroll_callback);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     glfwMakeContextCurrent(window);
-    glfwSwapInterval(1);
+    glfwSwapInterval(0);
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+    glViewport(0, 0, width, height);
 }
 
-void startLoop()
+void init()
 {
+    gl_init();
+}
+
+void loop()
+{
+    static double t = 0;
+    static double deltaT;
+
     while (!glfwWindowShouldClose(window)) {
-        loop();
+        gl_loop(deltaT);
         glfwSwapBuffers(window);
-        glfwPollEvents();
-        fpsTitle();
+        deltaT = glfwGetTime() - t;
+        glfwWaitEvents();
+        t = glfwGetTime();
+        //fpsTitle();
     }
 }
 
