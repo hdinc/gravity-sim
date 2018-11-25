@@ -8,6 +8,8 @@
 #include "point.h"
 extern int pause;
 GLint position;
+GLint color;
+int clear = 1;
 unsigned int count = 0;
 point* points;
 
@@ -41,6 +43,7 @@ void gl_init()
 
     GLuint program = createShaderProgram("vertexShader.glsl", "fragmentShader.glsl");
     position = glGetUniformLocation(program, "u_position");
+    color = glGetUniformLocation(program, "u_c");
     glUseProgram(program);
 
     glEnable(GL_PROGRAM_POINT_SIZE);
@@ -48,7 +51,7 @@ void gl_init()
 }
 void gl_loop(double deltaT)
 {
-    glClear(GL_COLOR_BUFFER_BIT);
+    if(clear)glClear(GL_COLOR_BUFFER_BIT);
     if (pause != 0) {
         collusion();
         calcForces();
@@ -58,6 +61,7 @@ void gl_loop(double deltaT)
     updateViewportCordinates();
     for (unsigned int i = 0; i < count; i++) {
         glPointSize(points[i].r/view_factor);
+        glUniform1f(color, points[i].m/1000+0.2);
         glUniform2f(position, points[i].glx, points[i].gly);
         glDrawArrays(GL_POINTS, 0, 1);
     }

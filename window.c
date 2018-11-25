@@ -5,6 +5,7 @@
 #include "window.h"
 extern unsigned int count;
 extern int G;
+extern int clear;
 int g;
 void addpoint(double x, double y);
 int ap;
@@ -103,11 +104,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         else
             pause = 1;
     }
-
     if (key == GLFW_KEY_C && action == GLFW_PRESS) {
         printf("count = %d\n", count);
     }
-
     if (key == GLFW_KEY_R && action == GLFW_PRESS) {
         count = 0;
     }
@@ -118,6 +117,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
     if (key == GLFW_KEY_G && action == GLFW_PRESS) {
         printf("%d\n", G);
+    }
+    if (key == GLFW_KEY_L && action == GLFW_PRESS) {
+        if (clear == 0) clear = 1;
+        else clear = 0;
     }
 }
 

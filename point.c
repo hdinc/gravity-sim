@@ -26,7 +26,7 @@ void collusion()
                 points[i].vx = (points[i].vx * points[i].m + points[j].vx * points[j].m) / (points[i].m + points[j].m);
                 points[i].vy = (points[i].vy * points[i].m + points[j].vy * points[j].m) / (points[i].m + points[j].m);
                 points[i].m += points[j].m;
-                points[i].r = 2 * sqrt(points[i].m);
+                points[i].r = sqrt(points[i].m);
                 points[j] = points[count - 1];
                 count--;
                 j--;
