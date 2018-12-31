@@ -1,5 +1,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <time.h>
 
 #include <stdio.h>
 
@@ -17,12 +18,24 @@ int main()
 {
     createWindow(500, 500, "gravity sim");
 
+    srand((unsigned) time(NULL));
+
     init();
 
-    points = calloc(10000, sizeof(point));
+    points = calloc(1000, sizeof(point));
     if (!points) {
         printf("calloc returned null");
         exit(1);
+    }
+
+    for(int i = -10 ; i < 10; i++){
+        for (int j = -10 ; j < 10 ; j++) {
+            points[count].sx = 20 * j;
+            points[count].sy = 20 * i;
+            points[count].r = 1;
+            points[count].m = 1;
+            count ++ ;
+        }
     }
 
     loop();
@@ -60,7 +73,7 @@ void gl_loop(double deltaT)
     }
     updateViewportCordinates();
     for (unsigned int i = 0; i < count; i++) {
-        glPointSize(points[i].r/view_factor);
+        glPointSize((points[i].r/2)/view_factor);
         glUniform1f(color, points[i].m/1000+0.2);
         glUniform2f(position, points[i].glx, points[i].gly);
         glDrawArrays(GL_POINTS, 0, 1);

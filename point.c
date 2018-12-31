@@ -1,18 +1,22 @@
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "point.h"
 static void setForcesZero();
+const int maxInitialSpeed = 500;
+
+double xx, yy;
 
 int G = 10000;
 
 void addpoint(double x, double y)
 {
-    points[count].sx = x;
-    points[count].sy = y;
-    points[count].vx = 0;
-    points[count].vy = 0;
+    points[count].vx = x - xx; //rand()%maxInitialSpeed-maxInitialSpeed/2;
+    points[count].vy = y - yy; //rand()%maxInitialSpeed-maxInitialSpeed/2;
     points[count].m = 1;
     points[count].r = 2;
+    points[count].sx = xx = x;
+    points[count].sy = yy = y;
     count++;
 }
 

@@ -16,7 +16,7 @@ GLFWwindow* window;
 int view_factor = 1;
 int wx, wy;
 
-int pause = 1;
+int pause = 0;
 
 void fpsTitle()
 {
