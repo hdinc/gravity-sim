@@ -3,8 +3,10 @@
 
 #include <GLFW/glfw3.h>
 
-void fpsTitle();
+extern GLFWwindow* window;
+
 void createWindow(int width, int height, const char* title);
 void destroyWindow();
-void startLoop();
+void loop();
+void init();
 #endif //WINDOW_H

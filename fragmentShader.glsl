@@ -1,7 +1,7 @@
 #version 330 core
 out vec4 color;
-uniform vec4 u_barzo;
+uniform float u_c;
 void main()
 {
-    color = u_barzo;
+    color = vec4(u_c,1.0-u_c,0.0,1.0);
 }

@@ -1,63 +1,82 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <time.h>
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "window.h"
 #include "shader.h"
-
-static const float positions[] = {
-    0.00f, 0.50f, //v0
-    0.25f, 0.25f, //v1
-    0.50f, 0.00f, //v2
-    0.25f, -0.25f, //v3
-    0.00f, -0.50f, //v4
-    -0.25f, -0.25f, //v5
-    -0.50f, 0.00f, //v6
-    -0.25f, 0.25f //v7
-};
-
-static const unsigned int indices[] = {
-    0, 7, 1,
-    7, 6, 5,
-    5, 4, 3,
-    3, 2, 1
-};
+#include "point.h"
+extern int pause;
+GLint position;
+GLint color;
+int clear = 1;
+unsigned int count = 0;
+point* points;
 
 int main()
 {
-    createWindow(500, 500, "");
+    createWindow(500, 500, "gravity sim");
 
-    GLuint VertexArrayID;
-    glGenVertexArrays(1, &VertexArrayID); //dfgsdfg
-    glBindVertexArray(VertexArrayID);
+    srand((unsigned) time(NULL));
 
-    GLuint vertexbuffer;
-    glGenBuffers(1, &vertexbuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-    glBufferData(GL_ARRAY_BUFFER, 8 * 2 * sizeof(float), positions, GL_STATIC_DRAW);
+    init();
 
-    GLuint indexbufer;
-    glGenBuffers(1, &indexbufer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbufer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * 4 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
+    points = calloc(1000, sizeof(point));
+    if (!points) {
+        printf("calloc returned null");
+        exit(1);
+    }
 
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(0);
+    for(int i = -10 ; i < 10; i++){
+        for (int j = -10 ; j < 10 ; j++) {
+            points[count].sx = 20 * j;
+            points[count].sy = 20 * i;
+            points[count].r = 1;
+            points[count].m = 1;
+            count ++ ;
+        }
+    }
 
-    GLuint shader = createShaderProgram("vertexShader.glsl", "fragmentShader.glsl");
-    
+    loop();
 
-    GLint uniformid = glGetUniformLocation(shader, "u_barzo");
-    glUseProgram(shader);
-    glUniform4f(uniformid, 0.0f,0.8f,0.2f,1.0f);
-
-    startLoop();
-
+    free(points);
     destroyWindow();
 }
-void loop()
+
+void gl_init()
 {
-    glClear(GL_COLOR_BUFFER_BIT);
-    glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, NULL);
+    GLuint vaoID;
+    glGenVertexArrays(1, &vaoID);
+    glBindVertexArray(vaoID);
+
+    GLuint vbID;
+    glGenBuffers(1, &vbID);
+    glBindBuffer(GL_ARRAY_BUFFER, vbID);
+
+    GLuint program = createShaderProgram("vertexShader.glsl", "fragmentShader.glsl");
+    position = glGetUniformLocation(program, "u_position");
+    color = glGetUniformLocation(program, "u_c");
+    glUseProgram(program);
+
+    glEnable(GL_PROGRAM_POINT_SIZE);
+    
+}
+void gl_loop(double deltaT)
+{
+    if(clear)glClear(GL_COLOR_BUFFER_BIT);
+    if (pause != 0) {
+        collusion();
+        calcForces();
+        updateSpeed(deltaT);
+        updateLocation(deltaT);
+    }
+    updateViewportCordinates();
+    for (unsigned int i = 0; i < count; i++) {
+        glPointSize((points[i].r/2)/view_factor);
+        glUniform1f(color, points[i].m/1000+0.2);
+        glUniform2f(position, points[i].glx, points[i].gly);
+        glDrawArrays(GL_POINTS, 0, 1);
+    }
 }
