@@ -3,6 +3,7 @@
 #include <time.h>
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "window.h"
 #include "shader.h"
